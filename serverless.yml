@@ -1,0 +1,35 @@
+service: myserverlessproject
+
+provider:
+    name: aws
+    runtime: nodejs16.x
+    profile: serverless-user
+    region: eu-west-1
+
+plugins:
+    - serverless-s3-sync
+    - serverless-webpack
+
+package:
+    individually: true
+
+custom:
+    s3Sync:
+        - bucketName: myserverlessprojectuploadbucket-12345678765
+          localDir: UploadData
+
+functions:
+    getUser:
+        handler: lambdas/getUser.handler
+        events:
+            - http:
+                  path: get-user/{ID}
+                  method: GET
+                  cors: true
+
+resources:
+    Resources:
+        DemoBucketUpload:
+            Type: AWS::S3::Bucket
+            Properties:
+                BucketName: myserverlessprojectuploadbucket-12345678765
